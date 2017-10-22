@@ -2,6 +2,7 @@ package com.dersommer.sample.caching.repository.impl;
 
 import com.dersommer.sample.caching.exception.ApplicationException;
 import com.dersommer.sample.caching.model.CountriesResponse;
+import com.dersommer.sample.caching.model.Envelope;
 import com.dersommer.sample.caching.repository.CountryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.management.RuntimeErrorException;
 import java.io.IOException;
 import java.net.URI;
 
@@ -77,7 +77,8 @@ public class SimpleCountryRepository implements CountryRepository {
 
     private CountriesResponse transformResponse(ResponseEntity<String> entity) {
         try {
-            return getJsonParser().readValue(entity.getBody(), CountriesResponse.class);
+            Envelope envelope = getJsonParser().readValue(entity.getBody(), Envelope.class);
+            return envelope.getRestResponse();
         } catch (IOException e) {
             LOGGER.error("Could not parse response {} ", entity.getBody());
             throw new ApplicationException("Failed to retrieve data");
