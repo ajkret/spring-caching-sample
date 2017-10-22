@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -30,6 +31,7 @@ public class SimpleCountryRepository implements CountryRepository {
     private static ThreadLocal<ObjectMapper> jsonParser = new ThreadLocal<>();
 
     @Override
+    @Cacheable("countries")
     public CountriesResponse getCountries() {
         return retrieveFlightInfo();
     }
