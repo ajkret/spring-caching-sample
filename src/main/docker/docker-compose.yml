@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+
+  instance1:
+    image: spring-caching-sample:1.0-SNAPSHOT
+    container_name: instance1
+    hostname: instance1
+    expose:
+      - "7745"
+    ports:
+      - "18070:8070"
+
+  instance2:
+    image: spring-caching-sample:1.0-SNAPSHOT
+    container_name: instance2
+    hostname: instance2
+    expose:
+      - "7745"
+    ports:
+      - "28070:8070"
+
+networks:
+  default:
+    external:
+      name: caching_vpc
