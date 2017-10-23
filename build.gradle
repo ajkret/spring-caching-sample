@@ -32,5 +32,6 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jersey'
     compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     compile group: 'com.hazelcast', name: 'hazelcast'
+    compile group: 'com.hazelcast', name: 'hazelcast-spring'
     testCompile group: 'junit', name: 'junit'
 }

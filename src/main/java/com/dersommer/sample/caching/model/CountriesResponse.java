@@ -2,12 +2,14 @@ package com.dersommer.sample.caching.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Maps the entire response from http://services.groupkt.com/country/get/all
  */
-public class CountriesResponse {
+public class CountriesResponse implements Serializable {
+    private static final long serialVersionUID = 1;
 
     @JsonProperty("messages")
     private String[] messages;

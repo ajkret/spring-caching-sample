@@ -8,11 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,8 +33,9 @@ public class SimpleCountryRepository implements CountryRepository {
     private static ThreadLocal<ObjectMapper> jsonParser = new ThreadLocal<>();
 
     @Override
-    @Cacheable("countries")
+    @Cacheable("countriesCacheMap")
     public CountriesResponse getCountries() {
+        LOGGER.info("Requesting new Data...");
         return retrieveFlightInfo();
     }
 
@@ -99,6 +102,12 @@ public class SimpleCountryRepository implements CountryRepository {
             jsonParser.set(new ObjectMapper());
         }
         return jsonParser.get();
+    }
+
+    @CacheEvict(cacheNames="countriesCacheMap", allEntries = true)
+    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
+    public void clearCache() {
+        LOGGER.info("Clearing Cache");
     }
 
 }

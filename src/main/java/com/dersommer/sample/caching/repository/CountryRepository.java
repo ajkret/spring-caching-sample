@@ -5,4 +5,6 @@ import com.dersommer.sample.caching.model.CountriesResponse;
 public interface CountryRepository {
 
     CountriesResponse getCountries();
+
+    void clearCache();
 }
