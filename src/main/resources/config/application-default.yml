@@ -7,9 +7,9 @@ hazelcast:
             port: 7745
             port-auto-increment: false
             multicast:
-                enabled: false
-            tcp-ip:
                 enabled: true
+            tcp-ip:
+                enabled: false
             aws:
                 enabled: false
                 security-group-name: sg-hazelcast

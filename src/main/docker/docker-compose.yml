@@ -1,5 +1,7 @@
 version: '3.3'
 
+# Working in progress. To make hazelcast discovery work with Docker, check
+# this https://github.com/hazelcast/hazelcast-docker#hazelcast-docker-files
 services:
 
   instance1:
@@ -11,16 +13,7 @@ services:
     ports:
       - "18070:8070"
 
-  instance2:
-    image: spring-caching-sample:1.0-SNAPSHOT
-    container_name: instance2
-    hostname: instance2
-    expose:
-      - "7745"
-    ports:
-      - "28070:8070"
-
-networks:
-  default:
-    external:
-      name: caching_vpc
+#networks:
+#  default:
+#    external:
+#      name: caching_vpc
