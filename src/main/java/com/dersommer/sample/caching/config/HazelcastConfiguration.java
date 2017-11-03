@@ -78,7 +78,9 @@ public class HazelcastConfiguration {
         joinConfig.getAwsConfig().setEnabled(false);
         if (this.tcpIpEnabled) {
             joinConfig.getTcpIpConfig().setEnabled(true);
-            LOGGER.info("Hazelcast: TCP IP joiner {}", Arrays.asList(this.tcpMembers).stream().collect(Collectors.joining(",")));
+            LOGGER.info("Hazelcast: TCP IP joiner {}", Arrays.asList(this.tcpMembers)
+                                                             .stream()
+                                                             .collect(Collectors.joining(",")));
             TcpIpConfig tcpIpConfig = joinConfig.getTcpIpConfig();
             if (this.tcpMembers != null) {
                 Stream.of(this.tcpMembers).forEach((member) -> {
@@ -128,6 +130,9 @@ public class HazelcastConfiguration {
         }
 
         config.setNetworkConfig(networkConfig);
+
+        // Logging
+        config.setProperty("hazelcast.logging.type", "slf4j");
         return config;
     }
 }

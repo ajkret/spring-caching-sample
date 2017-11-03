@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
+        classpath("se.transmode.gradle:gradle-docker:1.2")
     }
 }
 
@@ -14,6 +15,8 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'application'
+apply plugin: 'docker'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -22,9 +25,9 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    baseName = 'caching'
-}
+//jar {
+//    baseName = 'caching'
+//}
 
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter'
@@ -32,5 +35,33 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jersey'
     compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     compile group: 'com.hazelcast', name: 'hazelcast'
+    compile group: 'com.hazelcast', name: 'hazelcast-spring'
     testCompile group: 'junit', name: 'junit'
+}
+
+task copyDockerFiles() {
+    doLast {
+        copy {
+            from 'src/main/docker/Dockerfile.template'
+            into 'src/main/docker/'
+            rename { file -> 'Dockerfile' }
+            expand(jar_name: "${project.name}", jar_version: "${project.version}")
+        }
+    }
+}
+
+task buildDocker(type: Docker, dependsOn: [build, copyDockerFiles]) {
+    push = false
+    println "Jar name is: ${jar.baseName}"
+    applicationName = jar.baseName
+    dockerfile = file('src/main/docker/Dockerfile')
+    tag = "${project.name}"
+    doFirst {
+        copy {
+            from jar
+            from file('src/main/docker/start.sh')
+            into stageDir
+        }
+    }
+
 }

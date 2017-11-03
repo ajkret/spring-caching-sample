@@ -2,7 +2,13 @@ package com.dersommer.sample.caching.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Country {
+import java.io.Serializable;
+
+/**
+ * Map a single Country (the model). Hazelcast only works with Serializable objects
+ */
+public class Country implements Serializable {
+    private static final long serialVersionUID = 1;
 
     @JsonProperty("name")
     private String name;

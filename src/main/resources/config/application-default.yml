@@ -13,6 +13,11 @@ hazelcast:
             aws:
                 enabled: false
 
+aws:
+   accessKey: ${awsKey:none}
+   secretKey: ${awsPwd:none}
+   region: us-west-1
+
 lists:
     aList:
         - "First"
