@@ -1,0 +1,19 @@
+hazelcast:
+    config:
+        group:
+            name: group-dev
+            password: group-dev
+        network:
+            port: 8705
+            port-auto-increment: true
+            multicast:
+                enabled: false
+            tcp-ip:
+                enabled: true
+            aws:
+                enabled: false
+
+lists:
+    aList:
+        - "First"
+        - "Second"
