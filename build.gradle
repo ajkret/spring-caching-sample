@@ -22,6 +22,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
@@ -36,6 +37,8 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     compile group: 'com.hazelcast', name: 'hazelcast'
     compile group: 'com.hazelcast', name: 'hazelcast-spring'
+    compile 'org.bitsofinfo:hazelcast-docker-swarm-discovery-spi:1.0-RC1'
+
     testCompile group: 'junit', name: 'junit'
 }
 

@@ -1,24 +1,41 @@
 package com.dersommer.sample.caching.config;
 
 import com.dersommer.sample.caching.config.properties.HazelcastNetworkConfiguration;
+import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Profile("docker")
 @Component
 public class HazelcastCustomDiscovery implements HazelcastNetworkConfiguration {
 
-//            <discovery-strategy enabled="true"
-//    class="org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy">
+    @Value("${hazelcast.config.network.docker.enabled:false}")
+    private boolean enabled;
+
+    @Value("${hazelcast.config.custom.docker.networkNames:}")
+    private String[] networkNames;
+
+    @Value("${hazelcast.config.network.docker.serviceNames:}")
+    private String[] serviceNames;
+
+    @Value("${hazelcast.config.network.docker.serviceLabels:}")
+    private String[] serviceLabels;
+
+    @Value("${hazelcast.config.network.port:5701}")
+    private int peerPort;
+
+//            <discovery-strategy enabled="true" class="org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy">
 //          <properties>
 //            <!-- Comma delimited list of Docker network names to discover matching services on -->
 //            <property name="docker-network-names">${dockerNetworkNames}</property>
-//            <!-- Comma delimited list of relevant Docker service names
-//    to find tasks/containers on the above networks -->
+//            <!-- Comma delimited list of relevant Docker service names to find tasks/containers on the above networks -->
 //            <property name="docker-service-names">${dockerServiceNames}</property>
-//            <!-- Comma delimited list of relevant Docker service label=values
-//    to find tasks/containers on the above networks -->
+//            <!-- Comma delimited list of relevant Docker service label=values to find tasks/containers on the above networks -->
 //            <property name="docker-service-labels">${dockerServiceLabels}</property>
 //            <!-- The raw port that hazelcast is listening on
 //
@@ -34,6 +51,21 @@ public class HazelcastCustomDiscovery implements HazelcastNetworkConfiguration {
 
     @Override
     public void apply(JoinConfig joinConfig) {
+        if (enabled) {
+            DiscoveryStrategyConfig strategyConfig = new DiscoveryStrategyConfig("org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy");
+            strategyConfig.addProperty("docker-network-names", Arrays.asList(networkNames)
+                                                                     .stream()
+                                                                     .collect(Collectors.joining(",")));
+            strategyConfig.addProperty("docker-service-names", Arrays.asList(serviceNames)
+                                                                     .stream()
+                                                                     .collect(Collectors.joining(",")));
+            strategyConfig.addProperty("docker-service-labels", Arrays.asList(serviceLabels)
+                                                                      .stream()
+                                                                      .collect(Collectors.joining(",")));
+            strategyConfig.addProperty("hazelcast-peer-port", String.valueOf(peerPort));
+            joinConfig.getDiscoveryConfig().addDiscoveryStrategyConfig(strategyConfig);
+        }
+
 
     }
 }
