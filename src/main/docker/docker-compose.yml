@@ -11,7 +11,7 @@ services:
     environment:
       PROFILE: docker
     expose:
-      - "7745"
+      - "8705"
     ports:
       - "18070:8070"
 
@@ -22,7 +22,7 @@ services:
     environment:
       PROFILE: docker
     expose:
-      - "7745"
+      - "8705"
     ports:
       - "18071:8070"
 
