@@ -1,9 +1,11 @@
 package com.dersommer.sample.caching.config;
 
-import com.dersommer.sample.caching.config.properties.HazelcastNetworkConfiguration;
+import com.dersommer.sample.caching.config.properties.HazelcastConfigurationStep;
+import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -12,24 +14,71 @@ import java.util.stream.Collectors;
 
 @Profile("docker")
 @Component
-public class HazelcastCustomDiscovery implements HazelcastNetworkConfiguration {
+@ConfigurationProperties(prefix="hazelcast.config.network.docker")
+public class HazelcastCustomDiscovery implements HazelcastConfigurationStep {
 
-    @Value("${hazelcast.config.network.docker.enabled:false}")
     private boolean enabled;
 
-    @Value("${hazelcast.config.custom.docker.networkNames:}")
     private String[] networkNames;
 
-    @Value("${hazelcast.config.network.docker.serviceNames:}")
     private String[] serviceNames;
 
-    @Value("${hazelcast.config.network.docker.serviceLabels:}")
     private String[] serviceLabels;
+
+    private String appName;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String[] getNetworkNames() {
+        return networkNames;
+    }
+
+    public void setNetworkNames(String[] networkNames) {
+        this.networkNames = networkNames;
+    }
+
+    public String[] getServiceNames() {
+        return serviceNames;
+    }
+
+    public void setServiceNames(String[] serviceNames) {
+        this.serviceNames = serviceNames;
+    }
+
+    public String[] getServiceLabels() {
+        return serviceLabels;
+    }
+
+    public void setServiceLabels(String[] serviceLabels) {
+        this.serviceLabels = serviceLabels;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public int getPeerPort() {
+        return peerPort;
+    }
+
+    public void setPeerPort(int peerPort) {
+        this.peerPort = peerPort;
+    }
 
     @Value("${hazelcast.config.network.port:5701}")
     private int peerPort;
 
-//            <discovery-strategy enabled="true" class="org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy">
+//       <discovery-strategy enabled="true" class="org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy">
 //          <properties>
 //            <!-- Comma delimited list of Docker network names to discover matching services on -->
 //            <property name="docker-network-names">${dockerNetworkNames}</property>
@@ -50,8 +99,10 @@ public class HazelcastCustomDiscovery implements HazelcastNetworkConfiguration {
 //        </discovery-strategy>
 
     @Override
-    public void apply(JoinConfig joinConfig) {
+    public void apply(Config config) {
         if (enabled) {
+            JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+
             DiscoveryStrategyConfig strategyConfig = new DiscoveryStrategyConfig("org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategy");
             strategyConfig.addProperty("docker-network-names", Arrays.asList(networkNames)
                                                                      .stream()
@@ -65,7 +116,5 @@ public class HazelcastCustomDiscovery implements HazelcastNetworkConfiguration {
             strategyConfig.addProperty("hazelcast-peer-port", String.valueOf(peerPort));
             joinConfig.getDiscoveryConfig().addDiscoveryStrategyConfig(strategyConfig);
         }
-
-
     }
 }

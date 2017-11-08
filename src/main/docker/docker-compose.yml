@@ -8,12 +8,25 @@ services:
     image: spring-caching-sample:1.0-SNAPSHOT
     container_name: instance1
     hostname: instance1
+    environment:
+      PROFILE: docker
     expose:
       - "7745"
     ports:
       - "18070:8070"
 
-#networks:
-#  default:
-#    external:
-#      name: caching_vpc
+  instance2:
+    image: spring-caching-sample:1.0-SNAPSHOT
+    container_name: instance2
+    hostname: instance2
+    environment:
+      PROFILE: docker
+    expose:
+      - "7745"
+    ports:
+      - "18071:8070"
+
+networks:
+  default:
+    external:
+      name: caching_vpc

@@ -3,7 +3,7 @@ package com.dersommer.sample.caching.config.properties;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 
-public interface HazelcastConfigStep {
+public interface HazelcastConfigurationStep {
 
-    void apply(Config joinConfig);
+    void apply(Config config);
 }

@@ -10,15 +10,11 @@ hazelcast:
                 enabled: false
             tcp-ip:
                 enabled: true
+                members: instance1:8705, instance2:8705
             aws:
                 enabled: false
-
-aws:
-   accessKey: ${awsKey:none}
-   secretKey: ${awsPwd:none}
-   region: us-west-1
-
-lists:
-    aList:
-        - "First"
-        - "Second"
+            docker:
+                enabled: false
+                networkNames: caching_vpc
+                serviceNames: instance1,instance2
+                serviceLabels:

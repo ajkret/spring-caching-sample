@@ -1,10 +1,10 @@
 package com.dersommer.sample.caching.config.properties;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MulticastConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 @Component
 @ConfigurationProperties(prefix = "hazelcast.config.network.multicast")
-public class HazelcastMulticastConfiguration implements HazelcastNetworkConfiguration {
+public class HazelcastMulticastConfiguration implements HazelcastConfigurationStep {
     private static Logger LOGGER = LoggerFactory.getLogger(HazelcastMulticastConfiguration.class);
 
     private boolean enabled;
@@ -25,8 +25,10 @@ public class HazelcastMulticastConfiguration implements HazelcastNetworkConfigur
     private boolean loopbackMode;
 
     @Override
-    public void apply(JoinConfig joinConfig) {
+    public void apply(Config config) {
         if(enabled) {
+            JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+
             joinConfig.getMulticastConfig().setEnabled(true);
             LOGGER.info("Hazelcast: Multicast joiner {}:{} loopback mode={} interfaces {} ", new Object[]{this.group, this.port, this.loopbackMode, this.interfaces});
 

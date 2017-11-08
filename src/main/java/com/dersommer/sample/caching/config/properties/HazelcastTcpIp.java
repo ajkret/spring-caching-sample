@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-@ConfigurationProperties(prefix="hazelcast.config.network.tcp-ip")
-public class HazelcastNetworkTcpIp implements HazelcastConfigurationStep {
-    public static Logger LOGGER = LoggerFactory.getLogger(HazelcastNetworkTcpIp.class);
+@ConfigurationProperties(prefix = "hazelcast.config.network.tcp-ip")
+public class HazelcastTcpIp implements HazelcastConfigurationStep {
+    public static Logger LOGGER = LoggerFactory.getLogger(HazelcastTcpIp.class);
 
     private boolean enabled;
 
@@ -23,16 +23,16 @@ public class HazelcastNetworkTcpIp implements HazelcastConfigurationStep {
 
     @Override
     public void apply(Config config) {
-        if(enabled) {
+        if (enabled) {
             JoinConfig joinConfig = config.getNetworkConfig().getJoin();
             joinConfig.getTcpIpConfig().setEnabled(true);
-            LOGGER.info("Hazelcast: TCP IP joiner {}", Arrays.asList(this.members)
-                                                             .stream()
-                                                             .collect(Collectors.joining(",")));
-            TcpIpConfig tcpIpConfig = joinConfig.getTcpIpConfig();
+
             if (this.members != null) {
+                LOGGER.info("Hazelcast: TCP IP joiner {}", Arrays.asList(this.members)
+                                                                 .stream()
+                                                                 .collect(Collectors.joining(",")));
                 Stream.of(this.members).forEach((member) -> {
-                    tcpIpConfig.addMember(member);
+                    joinConfig.getTcpIpConfig().addMember(member);
                 });
             }
         }

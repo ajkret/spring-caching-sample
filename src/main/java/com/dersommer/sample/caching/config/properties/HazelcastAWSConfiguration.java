@@ -1,6 +1,7 @@
 package com.dersommer.sample.caching.config.properties;
 
 import com.hazelcast.config.AwsConfig;
+import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.springframework.util.StringUtils;
 
 @Component
 @ConfigurationProperties(prefix = "hazelcast.config.network.aws")
-public class HazelcastAWSConfiguration implements HazelcastNetworkConfiguration {
+public class HazelcastAWSConfiguration implements HazelcastConfigurationStep {
     private static Logger LOGGER = LoggerFactory.getLogger(HazelcastAWSConfiguration.class);
 
     @Value("${aws.accessKey:}")
@@ -34,8 +35,10 @@ public class HazelcastAWSConfiguration implements HazelcastNetworkConfiguration 
     private String tagValue;
 
     @Override
-    public void apply(JoinConfig joinConfig) {
+    public void apply(Config config) {
         if (enabled) {
+            JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+
             joinConfig.getAwsConfig().setEnabled(true);
             LOGGER.info("Hazelcast: AWS discovery enabled AWS Key {} region {}", this.awsAccessKey, this.awsRegion);
             AwsConfig awsConfig = joinConfig.getAwsConfig();

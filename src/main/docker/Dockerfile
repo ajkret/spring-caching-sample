@@ -6,4 +6,4 @@ RUN apk --update add curl
 
 EXPOSE 7745
 
-ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /home/spring-caching-sample.jar"]
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -Dspring.profiles.active=$PROFILE -jar /home/spring-caching-sample.jar"]

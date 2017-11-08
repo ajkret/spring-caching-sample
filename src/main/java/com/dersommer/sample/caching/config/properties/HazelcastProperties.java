@@ -1,5 +1,6 @@
 package com.dersommer.sample.caching.config.properties;
 
+import com.hazelcast.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix="hazelcast.config.properties")
-public class HazelcastProperties {
+public class HazelcastProperties implements HazelcastConfigurationStep {
 
     private boolean discoveryEnabled = true;
 
@@ -43,40 +44,12 @@ public class HazelcastProperties {
         this.socketBindAny = socketBindAny;
     }
 
-
-    //    @Value("${hazelcast.config.network.port:5705}")
-//    private int port;
-//    @Value("${hazelcast.config.network.port-auto-increment:true}")
-//    private boolean portAutoIncrement;
-//    @Value("${hazelcast.config.network.multicast.enabled:false}")
-//    private boolean multicastEnabled;
-//    @Value("${hazelcast.config.network.multicast.interfaces:false}")
-//    private String[] multicastInterfaces;
-//    @Value("${hazelcast.config.network.multicast.port:0}")
-//    private int multicastPort;
-//    @Value("${hazelcast.config.network.multicast.group:group}")
-//    private String multicastGroup;
-//    @Value("${hazelcast.config.network.multicast.loopback-mode:false}")
-//    private boolean multicastLoopbackMode;
-//    @Value("${hazelcast.config.network.tcp-ip.enabled:true}")
-//    private boolean tcpIpEnabled;
-//    @Value("${hazelcast.config.network.tcp-ip.members:127.0.0.1}")
-//    private String[] tcpMembers;
-//    @Value("${hazelcast.config.network.aws.enabled:false}")
-//    private boolean awsEnabled;
-//    @Value("${aws.accessKey:}")
-//    private String awsAccessKey;
-//    @Value("${aws.secretKey:}")
-//    private String awsSecretKey;
-//    @Value("${aws.region:}")
-//    private String awsRegion;
-//    @Value("${hazelcast.config.network.aws.host-header:}")
-//    private String awsHostHeader;
-//    @Value("${hazelcast.config.network.aws.security-group-name:}")
-//    private String awsSecurityGroupName;
-//    @Value("${hazelcast.config.network.aws.tag-key:}")
-//    private String awsTagKey;
-//    @Value("${hazelcast.config.network.aws.tag-value:}")
-//    private String awsTagValue;
-
+    @Override
+    public void apply(Config config) {
+        // Support for additional properties
+        config.setProperty("hazelcast.logging.type", logging);
+        config.setProperty("hazelcast.discovery.enabled", String.valueOf(isDiscoveryEnabled()));
+        config.setProperty("hazelcast.shutdownhook.enabled", String.valueOf(isShutdownHook()));
+        config.setProperty("hazelcast.socket.bind.any", String.valueOf(isSocketBindAny()));
+    }
 }
