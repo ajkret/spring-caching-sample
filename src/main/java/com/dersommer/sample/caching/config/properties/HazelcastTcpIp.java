@@ -1,5 +1,6 @@
 package com.dersommer.sample.caching.config.properties;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.TcpIpConfig;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 
 @Component
 @ConfigurationProperties(prefix="hazelcast.config.network.tcp-ip")
-public class HazelcastNetworkTcpIp implements HazelcastNetworkConfiguration {
+public class HazelcastNetworkTcpIp implements HazelcastConfigurationStep {
     public static Logger LOGGER = LoggerFactory.getLogger(HazelcastNetworkTcpIp.class);
 
     private boolean enabled;
@@ -21,8 +22,9 @@ public class HazelcastNetworkTcpIp implements HazelcastNetworkConfiguration {
     private String[] members;
 
     @Override
-    public void apply(JoinConfig joinConfig) {
+    public void apply(Config config) {
         if(enabled) {
+            JoinConfig joinConfig = config.getNetworkConfig().getJoin();
             joinConfig.getTcpIpConfig().setEnabled(true);
             LOGGER.info("Hazelcast: TCP IP joiner {}", Arrays.asList(this.members)
                                                              .stream()
